@@ -17,11 +17,17 @@ import { v4 as uuidv4 } from 'uuid';
 import { AddTaskDTO } from './DTO/addTaskDTO';
 import { Task } from './models/task';
 import { log } from 'console';
+import { TaskService } from './task.service';
 
 @Controller('task')
 export class TaskController {
+  constructor(private taskServ:TaskService) { }
+  //autre method pour injecter service  @Inject(TaskService) TaskServ nesta3mlouh ki nabdewsh f classe khatr constructor mamawjoud kn f classes
   allTasks: Task[] = [];
-
+  @Get('hello') 
+  msg() { 
+    return this.taskServ.msg()
+  }
   @Get('all')
   getAllTasks(@Req() request: Request, @Res() response: Response) {
     console.log(request);
@@ -48,7 +54,16 @@ export class TaskController {
       searchedTask,
     };
   }
-
+  @Post('add2')
+  addNewTask2(@Body() body: Task) {
+    let generatedId = uuidv4();
+    body.id = generatedId;
+    this.allTasks.push(body);
+    return {
+      message: 'Task added successfully',
+      generatedId,
+    };
+  }
   @Post('add')
   addNewTask(@Body() body: AddTaskDTO) {
     console.log(body instanceof AddTaskDTO);
